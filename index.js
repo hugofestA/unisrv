@@ -23,7 +23,7 @@ app.post('/api/login', function(req, res) {
          }
      }
     if (datafile != undefined){
-        if (datafile = username + ":" + passhash){
+        if (datafile == username + ":" + passhash){
             if (statusfile != undefined){
                 if (statusfile == 0){
                     var errchk = fs.writeFileSync('sta_' + username + '.txt', '1', 'utf8');
