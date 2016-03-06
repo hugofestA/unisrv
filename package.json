@@ -1,0 +1,21 @@
+{
+  "name": "unisrv",
+  "version": "1.0.0",
+  "description": "A node.js game server for Unity!",
+  "author": "hugofestA",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "main": "index.js",
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/hugofestA/unisrv"
+},
+  "keywords": [
+  "manyosu-bancho"
+],
+  "dependencies": {
+    "express": "4.13.4"
+  },
+  "license": "ISC"
+}
