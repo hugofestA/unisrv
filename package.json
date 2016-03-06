@@ -1,6 +1,6 @@
 {
   "name": "unisrv",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A node.js game server for Unity!",
   "author": "hugofestA",
   "scripts": {

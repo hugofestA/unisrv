@@ -30,13 +30,13 @@ app.post('/api/login', function(req, res) {
              console.log("fs-sta-notexsists, sta_" + username + ".txt");
          }
      }
-    //checking that reg file is readed or not
+    //checking if that reg file is readed or not
     if (datafile != undefined){
-        //checking that post data & regfile matches
+        //checking if that post data & regfile matches
         if (datafile == username + ":" + passhash){
-            //checking that status file is readed or not
+            //checking if that status file is readed or not
             if (statusfile != undefined){
-                //checking that status is offline
+                //checking if that status is offline
                 if (statusfile == 0){
                     //creating error check variable & creating file
                     var errchk = fs.writeFileSync('sta_' + username + '.txt', '1', 'utf8');
@@ -90,7 +90,7 @@ app.post('/api/login', function(req, res) {
     }
 });
 
-//almost same then login, differences are commented
+//almost same as login, differences are commented
 app.post('/api/logout', function(req, res) {
     var username = req.body.username; 
  	var passhash = req.body.passhash;
