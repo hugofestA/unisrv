@@ -12,7 +12,8 @@
     "url": "https://github.com/hugofestA/unisrv"
   },
   "keywords": [
-    "manyosu-bancho"
+    "unisrv",
+    "unity server"
   ],
   "dependencies": {
     "body-parser": "^1.15.0",
