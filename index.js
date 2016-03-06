@@ -129,18 +129,18 @@ app.post('/api/register', function(req, res) {
      } catch (e){
            var errchk1 = fs.writeFileSync('reg_' + username + '.txt', username + ':' + passhash, 'utf8');
            if (errchk1 == undefined){
-                res.send("1");
+               var errchk2 = fs.writeFileSync('sta_' + username + '.txt', '0', 'utf8');
+               if (errchk2 == undefined){
+                    res.send("1");
+               } else {
+                    res.send("fs-err");
+                    console.log("fs-err, errchk2, " + errchk2);
+               }
            } else {
                 res.send("fs-err");
                 console.log("fs-err, errchk1, " + errchk1);
            }
-           var errchk2 = fs.writeFileSync('sta_' + username + '.txt', '0', 'utf8');
-           if (errchk2 == undefined){
-                res.send("1");
-           } else {
-                res.send("fs-err");
-                console.log("fs-err, errchk2, " + errchk2);
-           }
+           
      } 
 });
 
