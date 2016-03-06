@@ -144,6 +144,21 @@ app.post('/api/register', function(req, res) {
      } 
 });
 
+app.post('/api/delete', function(req, res) {
+    var username = req.body.username; 
+ 	var passhash = req.body.passhash;
+    var datafile = undefined;
+     try {
+         fs.unlinkSync('reg_' + username + '.txt');
+         fs.unlinkSync('sta_' + username + '.txt');
+         console.log("deleted " + username + "'s account");
+         res.send("1");
+     } catch (e){
+         res.send("fs-err");
+         console.log("fs-err, delete");
+     } 
+});
+
 app.get('/', function (req, res) {
   res.send('ready'); //Signal for Unity code: "this server works"
 });
