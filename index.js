@@ -193,22 +193,35 @@ app.post('/api/register', function(req, res) {
 app.post('/api/delete', function(req, res) {
     //creating variables for post stuff
     var username = req.body.username;
-    //security fix coming soon!!! 
  	var passhash = req.body.passhash;
-     try {
-         //delete files
-         fs.unlinkSync('reg_' + username + '.txt');
-         fs.unlinkSync('sta_' + username + '.txt');
-         //log to console
-         console.log("deleted " + username + "'s account");
-         //send okay message
-         res.send("1");
-     } catch (e){ //if an error happened
-        //send fs error
-         res.send("fs-err");
-         //log to console
-         console.log("fs-err, delete");
-     } 
+    //creating datafile variable for reg file & error checking
+    var datafile = undefined;
+    try {
+        //read reg file into datafile variable
+        datafile = fs.readFileSync('reg_' + username + '.txt', 'utf8');
+    } catch (e){ //if an error happened
+        //send unregistered error message
+        res.send("unregistered");
+    }
+    //if datafile matches post data
+    if (datafile == username + ":" + passhash){
+        try {
+            //delete files
+            fs.unlinkSync('reg_' + username + '.txt');
+            fs.unlinkSync('sta_' + username + '.txt');
+            //log to console
+            console.log("deleted " + username + "'s account");
+            //send okay message
+            res.send("1");
+        } catch (e){ //if an error happened
+            //send fs error
+            res.send("fs-err");
+            //log to console
+            console.log("fs-err, delete");
+        } 
+    } else { //if datafile not matches post data
+        res.send("wrong username/passhash");
+    }
 });
 
 app.get('/', function (req, res) {
