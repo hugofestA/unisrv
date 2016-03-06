@@ -5,63 +5,92 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 app.post('/api/login', function(req, res) {
+    //creating variables for post stuff
     var username = req.body.username; 
  	var passhash = req.body.passhash;
+    //creating variables for error checking
     var datafile = undefined;
     var statusfile = undefined;
      try {
+         //reading register file
          datafile = fs.readFileSync('reg_' + username + '.txt', 'utf8');
      } catch (e){
+         //sending unregistered error
          res.send("unregistered");
      }
      try {
+        //reading status file
         statusfile = fs.readFileSync('sta_' + username + '.txt', 'utf8');
      } catch (e) {
+         //checking that reg file is readed or not
          if (datafile != undefined){
+             //send status file not exsists message
              res.send("fs-sta-notexsists");
+             //logging error to console
              console.log("fs-sta-notexsists, sta_" + username + ".txt");
          }
      }
+    //checking that reg file is readed or not
     if (datafile != undefined){
+        //checking that post data & regfile matches
         if (datafile == username + ":" + passhash){
+            //checking that status file is readed or not
             if (statusfile != undefined){
+                //checking that status is offline
                 if (statusfile == 0){
+                    //creating error check variable & creating file
                     var errchk = fs.writeFileSync('sta_' + username + '.txt', '1', 'utf8');
+                    //if error not happened
                     if (errchk == undefined){
+                        //send okay message
                         res.send("1");
-                    } else {
+                    } else { // if error happened
+                        //send fs error message
                         res.send("fs-err");
+                        //log to console
                         console.log("fs-err, " + errchk);
                     }
-                } else if (statusfile == 1){
+                } else if (statusfile == 1){ //checking that status is online
+                    //sending already logged in message
                     res.send("already logged in");
-                } else if (statusfile == 2){
+                } else if (statusfile == 2){ // checking that status is banned
+                    //sedding banned message
                     res.send("banned");
-                } else {
+                    //logging to console
+                    console.log("banned user(" + username + ") tried to log in.");
+                } else { //if status file is corrupted
+                    //sending corrupted message
                     res.send("invalid status file");
+                    //logging to console
                     console.log("invalid status file, sta_" + username + ".txt");
                 }
-            } else {
+            } else { //if status file is not readed
                 try {
+                    //send fs status empty error message
                     res.send("fs-sta-empty");
+                    //log to console
                     console.log("an error happened, sta_" + username + ".txt is empty, but reg_" + username + ".txt is okay.");
-                } catch (e){
+                } catch (e){ //anti-freakout catch
                     
                 }
             }
-        } else {
+        } else { //if post data & regfile not matches
+            //send error
             res.send("wrong username/passhash");
         }
-    } else {
+    } else { //if reg file is not readed
         try {
+            //send error message
             res.send("fs-reg-empty");
+            //log to console
             console.log("fs-reg-empty, reg_" + username + ".txt");
         } catch (e){
-            
+            //anti-freakout catch
         }
     }
 });
 
+//almost same then login, differences are commented
 app.post('/api/logout', function(req, res) {
     var username = req.body.username; 
  	var passhash = req.body.passhash;
@@ -83,14 +112,20 @@ app.post('/api/logout', function(req, res) {
     if (datafile != undefined){
         if (datafile == username + ":" + passhash){
             if (statusfile != undefined){
+                //if status is logged out
                 if (statusfile == 0){
                     res.send("already logged out")
-                } else if (statusfile == 1){
+                } else if (statusfile == 1){ //if status is logged in
+                    //create error variable & edit status file
                     var errchk = fs.writeFileSync('sta_' + username + '.txt', '0', 'utf8');
+                    //if error is not happened
                     if (errchk == undefined){
+                        //send okay message
                         res.send("1");
-                    } else {
+                    } else {  //if error is happened
+                        //send fs error message
                         res.send("fs-err");
+                        //log to console
                         console.log("fs-err, " + errchk);
                     }
                 } else if (statusfile == 2){
@@ -121,40 +156,57 @@ app.post('/api/logout', function(req, res) {
 });
 
 app.post('/api/register', function(req, res) {
+    //creating variables for post stuff
     var username = req.body.username; 
  	var passhash = req.body.passhash;
+    //readed file variable
     var datafile = undefined;
      try {
+         //read reg file of users
          datafile = fs.readFileSync('reg_' + username + '.txt', 'utf8');
-     } catch (e){
+         //already registered error message, this only calls if readfilesync succeeded
+         res.send("already registered");
+     } catch (e){ //catch, this is called if the readfile returns an error message
+           //error checking variable, write register file
            var errchk1 = fs.writeFileSync('reg_' + username + '.txt', username + ':' + passhash, 'utf8');
-           if (errchk1 == undefined){
+           if (errchk1 == undefined){ //if error is not happened
+               //error checking variable, write status file
                var errchk2 = fs.writeFileSync('sta_' + username + '.txt', '0', 'utf8');
-               if (errchk2 == undefined){
+               if (errchk2 == undefined){ //if error is not happened
+                    //send okay message
                     res.send("1");
-               } else {
+               } else { // if error is happened
+                    //send fs error message
                     res.send("fs-err");
+                    //log to console
                     console.log("fs-err, errchk2, " + errchk2);
                }
-           } else {
+           } else { //if error is happened
+                //send fs error message
                 res.send("fs-err");
+                //log to console
                 console.log("fs-err, errchk1, " + errchk1);
            }
-           
      } 
 });
 
 app.post('/api/delete', function(req, res) {
-    var username = req.body.username; 
+    //creating variables for post stuff
+    var username = req.body.username;
+    //security fix coming soon!!! 
  	var passhash = req.body.passhash;
-    var datafile = undefined;
      try {
+         //delete files
          fs.unlinkSync('reg_' + username + '.txt');
          fs.unlinkSync('sta_' + username + '.txt');
+         //log to console
          console.log("deleted " + username + "'s account");
+         //send okay message
          res.send("1");
-     } catch (e){
+     } catch (e){ //if an error happened
+        //send fs error
          res.send("fs-err");
+         //log to console
          console.log("fs-err, delete");
      } 
 });
@@ -163,4 +215,5 @@ app.get('/', function (req, res) {
   res.send('ready'); //Signal for Unity code: "this server works"
 });
 
+//listen
 app.listen(8080);
